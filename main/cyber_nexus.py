@@ -322,6 +322,8 @@ WARNING: This system performs live analysis. Use responsibly.
 
         try:
             context = ssl.create_default_context()
+            # Enforce minimum TLS 1.2 for secure connections
+            context.minimum_version = ssl.TLSVersion.TLSv1_2
             with socket.create_connection((domain, 443), timeout=10) as sock:
                 with context.wrap_socket(sock, server_hostname=domain) as ssock:
                     cert = ssock.getpeercert()
