@@ -1,6 +1,7 @@
 # ☄️ NEXZiLLA 🦖
 ## Cyber Intelligence Platform
 
+[![Pylint](https://github.com/FJ-cyberzilla/NEXZiLLA/actions/workflows/pylint.yml/badge.svg)](https://github.com/FJ-cyberzilla/NEXZiLLA/actions/workflows/pylint.yml)
 A production-ready, self-improving cyber intelligence platform with AI-powered threat analysis, forecasting, and automated reporting.
 
 ## 🎯 Features
