@@ -3,7 +3,7 @@ import aiohttp
 import asyncio
 import json
 from typing import Dict, List, Optional, Any
-from datetime import datetime
+from datetime import datetime, timedelta  # ✅ Added timedelta import
 from .models.threat import ThreatIntel
 from .models.forecast import ThreatForecast
 from .models.report import IntelligenceReport
@@ -26,9 +26,11 @@ class CyberIntelSDK:
     
     async def connect(self):
         """Initialize connection to cyber intelligence platform"""
-        self.session = aiohttp.ClientSession(
-            headers={'Authorization': f'Bearer {self.api_key}'} if self.api_key else {}
-        )
+        headers = {}
+        if self.api_key:
+            headers['Authorization'] = f'Bearer {self.api_key}'
+        
+        self.session = aiohttp.ClientSession(headers=headers)
         
         # Discover available agents
         await self.discover_agents()
@@ -64,7 +66,7 @@ class CyberIntelSDK:
         """Get threat forecast for target"""
         if not forecast_date:
             # Default to 30 days from now
-            forecast_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
+            forecast_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')  # ✅ Fixed: timedelta imported
         
         try:
             async with self.session.post(
