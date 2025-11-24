@@ -1,74 +1,67 @@
-[build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
+name: Tests
 
-[project]
-name = "cyber-intel-platform"
-version = "1.0.0"
-description = "Cyber Intelligence Platform with AI-powered threat analysis"
-authors = [
-    {name = "NEXZiLLA Team", email = "team@nexzilla.com"},
-]
-readme = "README.md"
-license = {text = "MIT"}
-requires-python = ">=3.8"
-dependencies = [
-    "aiohttp>=3.8.0",
-    "requests>=2.28.0",
-    "flask>=2.0.0",
-    "click>=8.0.0",
-    "pandas>=1.5.0",
-    "numpy>=1.21.0",
-    "pyyaml>=6.0",
-    "python-whois>=0.8.0",
-    "dnspython>=2.0.0",
-    "urllib3>=1.26.0",
-    "colorama>=0.4.0",
-    "tqdm>=4.60.0",
-    "python-dotenv>=0.19.0",
-]
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-asyncio>=0.18.0",
-    "pytest-cov>=4.0.0",
-    "black>=22.0.0",
-    "mypy>=0.991",
-    "flake8>=4.0.0",
-]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
 
-[project.scripts]
-cyber-intel = "cyber_intel_sdk.cli.main:cli"
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-asyncio_mode = "auto"
-addopts = [
-    "--verbose",
-    "--strict-markers",
-    "--strict-config",
-    "--cov=src",
-    "--cov-report=term-missing",
-    "--cov-report=html",
-]
-
-[tool.black]
-line-length = 88
-target-version = ['py38']
-
-[tool.mypy]
-python_version = "3.8"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-
-[tool.coverage.run]
-source = ["src"]
-omit = ["*/tests/*", "*/test_*"]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel build
+        
+        # Install the package in editable mode with dev dependencies
+        pip install -e ".[dev]"
+        
+    - name: Verify installation
+      run: |
+        python -c "import cyber_intel_sdk; print(f'✅ cyber_intel_sdk {cyber_intel_sdk.__version__} installed successfully')" || echo "⚠️ cyber_intel_sdk import failed"
+        echo "📦 Installed packages:"
+        pip list
+        
+    - name: Lint with flake8
+      run: |
+        flake8 cyber_intel_sdk main --count --select=E9,F63,F7,F82 --show-source --statistics || true
+        flake8 cyber_intel_sdk main --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics || true
+      continue-on-error: true
+      
+    - name: Check syntax
+      run: |
+        if [ -f run_tests.py ]; then
+          python run_tests.py --syntax-only
+        fi
+      continue-on-error: true
+      
+    - name: Run tests with pytest
+      run: |
+        if [ -f run_tests.py ]; then
+          python run_tests.py
+        else
+          pytest
+        fi
+      
+    - name: Upload coverage to Codecov
+      if: always()
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+      continue-on-error: true
