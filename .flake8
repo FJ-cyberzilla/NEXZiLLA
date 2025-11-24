@@ -1,6 +1,0 @@
-[flake8]
-exclude = .git,__pycache__,.pytest_cache,build,dist,venv,.venv,*.egg-info,migrations,docs,.vscode,.idea
-max-line-length = 88
-ignore = E203,W503,W504,C901
-select = E,W,F,C,B
-max-complexity = 10
