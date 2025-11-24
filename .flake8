@@ -1,39 +1,6 @@
 [flake8]
-# Exclude patterns
-exclude = 
-    .git,
-    __pycache__,
-    .pytest_cache,
-    build,
-    dist,
-    venv,
-    .venv,
-    *.egg-info,
-    migrations,
-    docs,
-    .vscode,
-    .idea
-
-# Maximum line length
+exclude = .git,__pycache__,.pytest_cache,build,dist,venv,.venv,*.egg-info,migrations,docs,.vscode,.idea
 max-line-length = 88
-
-# Ignore these errors
-ignore = 
-    E203,  # whitespace before ':' (conflicts with black)
-    W503,  # line break before binary operator
-    W504,  # line break after binary operator
-    C901,  # too complex (we'll handle complexity separately)
-
-# Select which errors to check for
-select = 
-    E,     # All pycodestyle errors
-    W,     # All pycodestyle warnings  
-    F,     # Pyflakes
-    C,     # McCabe complexity
-    B,     # Bugbear (security issues)
-
-# Per-file-ignores
-# tests/*.py: F401  # Allow unused imports in tests
-
-# Complexity threshold
+ignore = E203,W503,W504,C901
+select = E,W,F,C,B
 max-complexity = 10
