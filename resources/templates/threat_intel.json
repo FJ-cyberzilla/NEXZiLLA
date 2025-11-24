@@ -1,0 +1,27 @@
+{
+  "report_structure": {
+    "executive_summary": {
+      "max_length": 500,
+      "required_elements": ["risk_level", "key_findings", "recommendation"]
+    },
+    "technical_analysis": {
+      "sections": ["methodology", "findings", "evidence", "confidence"],
+      "ioc_format": ["ip", "domain", "hash", "url"]
+    },
+    "severity_levels": {
+      "critical": ["immediate_response_required", "notify_management"],
+      "high": ["enhanced_monitoring", "review_controls"],
+      "medium": ["standard_procedures", "scheduled_review"],
+      "low": ["document_only", "routine_monitoring"]
+    }
+  },
+  "automation_rules": {
+    "auto_generate": ["high_severity_findings", "incident_detection", "forecast_updates"],
+    "notify_stakeholders": {
+      "critical": ["CISO", "Incident_Response", "Management"],
+      "high": ["Security_Team", "IT_Management"],
+      "medium": ["Security_Team"],
+      "low": ["Documentation_Only"]
+    }
+  }
+}
